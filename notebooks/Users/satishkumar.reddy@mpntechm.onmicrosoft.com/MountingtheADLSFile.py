@@ -20,11 +20,11 @@ dbutils.fs.mount(
 
 # COMMAND ----------
 
-df = spark.read.csv("/mnt/Azure/Data.csv",inferSchema="true",header="true")
+df4 = spark.read.csv("/mnt/Azure/Data.csv",inferSchema="true",header="true")
 
 # COMMAND ----------
 
-df.show()
+df4.show()
 
 # COMMAND ----------
 
@@ -55,7 +55,10 @@ display(df1)
 
 # COMMAND ----------
 
-df1 = df.withColumn("Week",date_format(to_date(col('closed date'),'mm/dd/yyyy'),'W'))
+from pyspark.sql.functions import col, to_date,date_format,when
+df5 = df4.withColumn("Week",date_format(to_date(col('closed date'),'mm/dd/yyyy'),'W'))
+df6 = df5.withColumn("weekwithoutnull", when(col('Week').isNull(), date_format(to_date(col('closed date'),'mm/dd/yyyy'),'Y')).otherwise(date_format(to_date(col('closed date'),'mm/dd/yyyy'),'W')))
+display(df6)
 
 # COMMAND ----------
 
@@ -159,6 +162,36 @@ pplDf= df1.filter(df1.PersonName.isNotNull())
 # COMMAND ----------
 
 display(pplDf)
+
+# COMMAND ----------
+
+DFOuter = pplDf.join(countryDF,pplDf.CountryCode == countryDF.CountrySKU,'Outer')
+display(DFOuter)
+
+# COMMAND ----------
+
+DFROuter = pplDf.join(countryDF,pplDf.CountryCode == countryDF.CountrySKU,'rightOuter')
+display(DFROuter)
+
+# COMMAND ----------
+
+DFLOuter = pplDf.join(countryDF,pplDf.CountryCode == countryDF.CountrySKU,'leftOuter')
+display(DFLOuter)
+
+# COMMAND ----------
+
+DFLSemi = pplDf.join(countryDF,pplDf.CountryCode == countryDF.CountrySKU,'leftSemi')
+display(DFLSemi)
+
+# COMMAND ----------
+
+DFLAnti = pplDf.join(countryDF,pplDf.CountryCode == countryDF.CountrySKU,'leftAnti')
+display(DFLAnti)
+
+# COMMAND ----------
+
+DFCross = pplDf.crossJoin(countryDF)
+display(DFCross)
 
 # COMMAND ----------
 
