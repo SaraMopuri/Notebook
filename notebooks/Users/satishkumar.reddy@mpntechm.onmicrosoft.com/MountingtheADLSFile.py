@@ -56,9 +56,13 @@ display(df1)
 # COMMAND ----------
 
 from pyspark.sql.functions import col, to_date,date_format,when
-df5 = df4.withColumn("Week",date_format(to_date(col('closed date'),'mm/dd/yyyy'),'W'))
-df6 = df5.withColumn("weekwithoutnull", when(col('Week').isNull(), date_format(to_date(col('closed date'),'mm/dd/yyyy'),'Y')).otherwise(date_format(to_date(col('closed date'),'mm/dd/yyyy'),'W')))
-display(df6)
+from pyspark.sql import functions as f
+
+df5 = df4.withColumn("Week",f.when(date_format(to_date(col('Closed Date'),'MM/dd/yyyy'),'w').isNotNull(),date_format(to_date(col('Closed Date'),'MM/dd/yyyy'),'w')).otherwise(date_format(to_date(col('Closed Date'),'MM-dd-yyyy'),'w')))
+display(df5)
+#df5.select("Week").distinct().show()
+df5.filter(df5.Week.isNull()).show()
+
 
 # COMMAND ----------
 
