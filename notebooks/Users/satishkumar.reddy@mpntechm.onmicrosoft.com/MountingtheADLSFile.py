@@ -194,8 +194,10 @@ display(DFLAnti)
 
 # COMMAND ----------
 
+# DBTITLE 1,CrossJoin
 DFCross = pplDf.crossJoin(countryDF)
 display(DFCross)
+
 
 # COMMAND ----------
 
